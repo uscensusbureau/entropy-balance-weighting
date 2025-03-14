@@ -120,9 +120,16 @@ We appreciate any feedback you would like to provide us; please post any questio
 
 Citation Information:
 ---------------------
-Please cite this package in any work where it proves useful:
-
-Sanders, Carl. ``entropy-balance-weighting'' Python Package, version 0.5.0, 2025, https://github.com/uscensusbureau/entropy-balance-weighting, accessed on date \[x\].
+Please cite this package in any work where it proves useful.
+Bibtex citation:
+@software{Sanders_Accelerated_Entropy_Balance_2025,
+author = {Sanders, Carl},
+month = mar,
+title = {{Accelerated Entropy Balance Survey Reweighting}},
+url = {https://github.com/uscensusbureau/entropy-balance-weighting},
+version = {0.5.0},
+year = {2025}
+}
 
 
 Disclaimers:
