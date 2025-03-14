@@ -1,9 +1,5 @@
 Accelerated Entropy Balancing Survey Reweighting
 ------------------------------------
-Author: Carl Sanders
-
-Email: carl.e.sanders@census.gov
-
 This package implements an Entropy Balancing Weighting (EBW) routine for dense or sparse matrices.
 The goal of this package was to scale the EBW algorithm to allow it to work with large, complicated data
 sets. A particular focus is then on allowing sparse inputs, colinearity, and potential 
@@ -117,6 +113,15 @@ This verions of the problem moves the constraints into a smooth penalty function
 The advantage of this method is allowing for infeasible and colinear moments without any complications, and the simple form of the problem makes optimization fast. 
 
 The downside compared to the above methods is that for any finite $p$ the solution will not match the solution of the original EBW problem exactly, and the choice of $p$ is arbitrary for the end user. Additionally, unlike the bounded elastic mode version above, it is not possible to algorithmically use this version of the problem to determine the feasibility of the original problem. 
+
+Issues:
+-------
+We appreciate any feedback you would like to provide us; please post any questions that you may have in the GitHub issues section.
+
+Citation Information:
+---------------------
+Please cite this package in any work:
+Sanders, Carl. ``entropy-balance-weighting'' Python Package, version 0.5.0, 2025, https://github.com/uscensusbureau/entropy-balance-weighting, accessed on date \[x\].
 
 
 Disclaimers:
