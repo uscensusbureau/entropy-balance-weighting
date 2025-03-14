@@ -2,10 +2,10 @@ Accelerated Entropy Balancing Survey Reweighting
 ------------------------------------
 This package implements an Entropy Balancing Weighting (EBW) routine for dense or sparse matrices.
 The goal of this package was to scale the EBW algorithm to allow it to work with large, complicated data
-sets. A particular focus is then on allowing sparse inputs, colinearity, and potential 
+sets. A particular focus is then on allowing sparse inputs, collinearity, and potential 
 infeasibility without additional front-end data manipulation by the user.
 
-Scaling up EBW problems is largely possible due to the sparsity of naturally-occuring data, e.g. models with group-specific moments. Utilizing sparsity of datasets, models with millions of observations and hundreds of thousands of constraints have successfully converged in minutes. In addition, extensions like bound constraints and handling colinear and inconsistent moments have been added to the standard approach.
+Scaling up EBW problems is largely possible due to the sparsity of naturally-occurring data, e.g. models with group-specific moments. Utilizing sparsity of datasets, models with millions of observations and hundreds of thousands of constraints have successfully converged in minutes. In addition, extensions like bound constraints and handling collinear and inconsistent moments have been added to the standard approach.
 
 The paper detailing the algorithm is forthcoming.
 
@@ -36,7 +36,7 @@ The EBW problem solved here considers a set of $N$ sampled units, with initial u
 
 $$\phi(r; w_0)=\sum w_{0,i} (\log(r_{i}) - r_{i} + 1).$$
 
-The opimization problem can then be written
+The optimization problem can then be written
 
 $$\min_{r\in \mathbb{R}^N} \phi(r; w_0)$$
 
@@ -44,11 +44,11 @@ $$\min_{r\in \mathbb{R}^N} \phi(r; w_0)$$
 $$\text{s.t. } (\text{Diag}({w_{i,0})}X)^T r = m \cdot \sum_{i=1}^N w_{i,0}, \hspace{3pt} r\geq 0.$$
 
 
-The ```entropy_balance``` function takes three required keyword arguments: ```x_sample```, the $N\times K$ array dense or sparse matrix (numpy.array or scipy.sparse.csc_array/csr_array) of unit-level observations; ```weights0```, a numpy vector of the initial weights, best scaled to have mean 1; and ```mean_population_moments```, a numpy vector of the exterally-known unit-level mean of each column of $X$. As written above, the algorithm matches the aggregate moments, so keeping the relative scaling of $X$, $m$, and $w_{i,0}$ consistent with the formulation above makes the algorithm more stable, even if not theoretically necessary. 
+The ```entropy_balance``` function takes three required keyword arguments: ```x_sample```, the $N\times K$ array dense or sparse matrix (numpy.array or scipy.sparse.csc_array/csr_array) of unit-level observations; ```weights0```, a numpy vector of the initial weights, best scaled to have mean 1; and ```mean_population_moments```, a numpy vector of the externally-known unit-level mean of each column of $X$. As written above, the algorithm matches the aggregate moments, so keeping the relative scaling of $X$, $m$, and $w_{i,0}$ consistent with the formulation above makes the algorithm more stable, even if not theoretically necessary. 
 
 The function returns an ```EntropyBalanceResults``` object, which has a property ```EntropyBalanceResults.new_weights```, the new weights that match the moments (if possible) while being minimum distance from the initial weights.
 
-Passing in optional argments to ```entropy_balance``` can allow for setting bounds in the resulting ratios and dealing with infeasibility of the linear system; see the section "Bounded and Infeasible" below.
+Passing in optional arguments to ```entropy_balance``` can allow for setting bounds in the resulting ratios and dealing with infeasibility of the linear system; see the section "Bounded and Infeasible" below.
 
 
 ```entropy_balance``` Example:
@@ -89,7 +89,7 @@ Passing the kwarg ```options={"bounds": (lbound, ubound)}``` for scalar `lbound`
 There is a tradeoff between bound constraints and feasibility of the linear system matching the moments. To make bounds generally useful, the bounded `entropy_balance` algorithm runs "elastic mode", a variant problem that has the following properties:
 
 1. If the bounded problem is feasible, `entropy_balance(..., options={"bounds": ...})` returns the feasible solution.
-2. If the problem is infeasible, `entropy_balance` returns a point $r^\star$ that is feasible with respect to the bounds. This $r^\star$ minimizes the $L^1$ norm of the moment violations over the other feasible $r$ that satisfy $\phi(r) \leq \phi(r^\star)$; that is, the only way to make the moments match any better would be to increase the criterion. In practce, this matches as many moments exactly as possible, making it possible to identify which moments are impossible to simultaneously match.
+2. If the problem is infeasible, `entropy_balance` returns a point $r^\star$ that is feasible with respect to the bounds. This $r^\star$ minimizes the $L^1$ norm of the moment violations over the other feasible $r$ that satisfy $\phi(r) \leq \phi(r^\star)$; that is, the only way to make the moments match any better would be to increase the criterion. In practice, this matches as many moments exactly as possible, making it possible to identify which moments are impossible to simultaneously match.
 
 The bounded problem is necessarily slower than the unbounded problem, but in theory should converge in every run. After running with bounds, the ```EntropyBalanceResult.constraint_violations``` property can be used to judge if the original problem was feasible or not. The feasibility of the unconstrained problem can be checked by passing `{"bounds": (0, None)}`.
 
@@ -117,9 +117,9 @@ $$\text{s.t. }  A=\text{Diag}(\frac{w_{i,0}}{\sum_j w_{j,0}})X, \hspace{3pt} r\g
 where $p_{k}$ is a vector of positive penalty parameters chosen by the user. As above, this method also supports additional bound constraints on $r$ if provided.
 
 
-This verions of the problem moves the constraints into a smooth penalty function, which ensures feasibility. 
+This versions of the problem moves the constraints into a smooth penalty function, which ensures feasibility. 
 
-The advantage of this method is allowing for infeasible and colinear moments without any complications, and the simple form of the problem makes optimization fast. 
+The advantage of this method is allowing for infeasible and collinear moments without any complications, and the simple form of the problem makes optimization fast. 
 
 The downside compared to the above methods is that for any finite $p$ the solution will not match the solution of the original EBW problem exactly, and the choice of $p$ is arbitrary for the end user. Additionally, unlike the bounded elastic mode version above, it is not possible to algorithmically use this version of the problem to determine the feasibility of the original problem. 
 
