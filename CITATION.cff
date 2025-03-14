@@ -1,0 +1,26 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: Accelerated Entropy Balance Survey Reweighting
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Carl
+    family-names: Sanders
+    email: carl.e.sanders@census.gov
+    affiliation: U.S. Census Bureau
+repository-code: >-
+  https://github.com/uscensusbureau/entropy-balance-weighting
+abstract: >-
+  This package implements an Entropy Balancing Weighting
+  (EBW) routine for dense or sparse matrices.
+keywords:
+  - weighting
+  - entropy balance
+  - survey
+  - sampling
+version: 0.5.0
+date-released: '2025-03-14'
