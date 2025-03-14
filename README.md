@@ -21,7 +21,7 @@ Requirements:
 
 Installation:
 -------------
-Once the `.whl` file is downloaded and stored in \<wheel location\>, a simple
+Once the release `.whl` file is downloaded and stored in \<wheel location\>, a simple
 ```pip install <wheel location>```
 should work.
 
@@ -105,6 +105,7 @@ A secondary, currently slightly less supported, function in this package is ```e
 
 $$\min_{r\in \mathbb{R}^N} \phi(r; w_0) + \frac{1}{2} (A^T r-m)^T \text{Diag}(p_k)(A^T r - m)$$
 $$\text{s.t. }  A=\text{Diag}(\frac{w_{i,0}}{\sum_j w_{j,0}})X, \hspace{3pt} r\geq 0.$$
+
 where $p_{k}$ is a vector of positive penalty parameters chosen by the user. As above, this method also supports additional bound constraints on $r$ if provided.
 
 
@@ -121,17 +122,16 @@ We appreciate any feedback you would like to provide us; please post any questio
 Citation Information:
 ---------------------
 Please cite this package in any work where it proves useful.
-Bibtex citation:
-
-```@software{Sanders_Accelerated_Entropy_Balance_2025,
+```
+@software{Sanders_Accelerated_Entropy_Balance_2025,
 author = {Sanders, Carl},
 month = mar,
 title = {{Accelerated Entropy Balance Survey Reweighting}},
 url = {https://github.com/uscensusbureau/entropy-balance-weighting},
 version = {0.5.0},
 year = {2025}
-}```
-
+}
+```
 
 Disclaimers:
 ------------
