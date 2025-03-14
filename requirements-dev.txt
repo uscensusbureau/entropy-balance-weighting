@@ -1,0 +1,9 @@
+numpy
+scipy
+
+polars
+pytest
+
+numexpr
+sparse_dot_mkl
+pypardiso
