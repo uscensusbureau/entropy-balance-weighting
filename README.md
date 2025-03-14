@@ -74,6 +74,11 @@ array([6.72795153e-14, 1.28785871e-14, 4.66293670e-15])
 >>> assert np.allclose(res_ebw.new_weights, res_sparse.new_weights)
 ```
 
+More Examples:
+--------------
+More detailed examples can be found in the `./examples` directory in the main repository. In particular, the `pums_example.py` gives an example
+of downloading the US Census 2023 1-Year American Community Survey and reweighting to exactly match the state-level number of housing units from the US Census Population Estimates program.
+
 Bounded and Infeasible:
 -----------------------
 Passing the kwarg ```options={"bounds": (lbound, ubound)}``` for scalar `lbound` and `ubound` will solve the problem above with $\text{lbound} \leq r_i \leq \text{ubound }\forall i$. For no upper bound, pass `None` for `ubound`. 
