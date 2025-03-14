@@ -18,6 +18,9 @@ Requirements:
   - pypardiso (0.4.6)
   - sparse_dot_mkl (0.9.7)
   - numexpr (2.10.2)
+- Required packages for testing:
+  - polars (1.0+)
+  - pytest (8.3.0+)
 
 Installation:
 -------------
