@@ -23,6 +23,11 @@ Requirements:
   - sparse_dot_mkl (0.9.7)
   - numexpr (2.10.2)
 
+Installation:
+-------------
+Once the `.whl` file is downloaded and stored in \<wheel location\>, a simple
+```pip install <wheel location>```
+should work.
 
 Problem and Usage:
 -------------------
