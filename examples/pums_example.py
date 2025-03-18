@@ -27,7 +27,8 @@ def main() -> None:
     """
     state_housing_estimates = download_state_housing_estimates()
     household_weights = download_and_process_acs_data()
-    weighting(household_weights, state_housing_estimates)
+    survey_weighting(household_weights, state_housing_estimates)
+    treatment_balance_weighting(household_weights)
 
 
 def download_and_process_acs_data() -> pl.DataFrame:
@@ -42,9 +43,8 @@ def download_and_process_acs_data() -> pl.DataFrame:
 
     """
     temp_dir = Path("acs_data")
-    if (
-        not Path(temp_dir / "/psam_husa.csv").exists()
-        or not Path(temp_dir / "/psam_husb.csv").exists()
+    if not Path(temp_dir / "psam_husa.csv").exists() or (
+        not Path(temp_dir / "psam_husb.csv").exists()
     ):
         url = "https://www2.census.gov/programs-surveys/acs/data/pums/2023/1-Year/csv_hus.zip"
         print("Downloading ACS data...")
@@ -81,8 +81,12 @@ def download_and_process_acs_data() -> pl.DataFrame:
 
     df = pl.concat(dfs, how="vertical")
     # Select only the household weight column (WGTP)
-    weights_df = df.select("SERIALNO", "STATE", "WGTP").collect()
-
+    weights_df = (
+        df.select("SERIALNO", "STATE", "WGTP", "BDSP", "NP", "HHT2", "HHL", "HINCP")
+        .cast({"BDSP": pl.Float64, "HINCP": pl.Float64})
+        .collect()
+    )
+    weights_df = weights_df.to_dummies(["HHT2", "HHL"])
     states_dict = {
         "Alabama": 1,
         "Alaska": 2,
@@ -141,7 +145,17 @@ def download_and_process_acs_data() -> pl.DataFrame:
         how="left",
         on="STATE",
     )
-    weights_df = weights_df.select("SERIALNO", "state_name", "WGTP", "STATE")
+    weights_df = weights_df.select(
+        "SERIALNO",
+        "state_name",
+        "WGTP",
+        "STATE",
+        "BDSP",
+        "NP",
+        "^HHT2.*$",
+        "^HHL.*$",
+        "HINCP",
+    )
     print(f"Successfully extracted household weights. Shape: {weights_df.shape}")
 
     return weights_df
@@ -158,7 +172,7 @@ def download_state_housing_estimates() -> pl.DataFrame:
 
     """
     temp_dir = Path("popest_housing_data")
-    housing_excel = Path(temp_dir / "/popest_housing_counts.xlsx")
+    housing_excel = Path(temp_dir / "popest_housing_counts.xlsx")
     if not housing_excel.exists():
         url = "https://www2.census.gov/programs-surveys/popest/tables/2020-2023/housing/totals/NST-EST2023-HU.xlsx"
 
@@ -191,7 +205,7 @@ def download_state_housing_estimates() -> pl.DataFrame:
     return housing_2023
 
 
-def weighting(df: pl.DataFrame, df_moments: pl.DataFrame) -> None:
+def survey_weighting(df: pl.DataFrame, df_moments: pl.DataFrame) -> None:
     """
     Run the reweighting and analyze results.
 
@@ -226,7 +240,6 @@ def weighting(df: pl.DataFrame, df_moments: pl.DataFrame) -> None:
     moments = moments / w0_scale
     weights0 = weights0 / w0_scale
     mean_population_moments = moments / n
-    ebw.setup_logging("ebw.log")
     res = ebw.entropy_balance(
         mean_population_moments=mean_population_moments, x_sample=x, weights0=weights0
     )
@@ -240,6 +253,74 @@ def weighting(df: pl.DataFrame, df_moments: pl.DataFrame) -> None:
     print(np.corrcoef(res.new_weights, weights0)[0, 1])
     print("Max/min new weight ratios:")
     print(np.max(res.new_weights / weights0), np.min(res.new_weights / weights0))
+
+
+def treatment_balance_weighting(df: pl.DataFrame) -> None:
+    """
+    Reweight a set of samples to all have the same weighted characteristics.
+
+    I calculate the original weighted national sample average of # of bedrooms,
+    # of people, dummies of category of household type, dummies of categories
+    of language spoken at home, and houshold income.
+    I then reweight each state so that the within-state weighted averages of
+    all categories are equal to the national average.
+
+    As this is just an example, I don't deal at all with missing data to make the
+    data construction simpler.
+    """
+    df = df.filter(pl.col("WGTP").gt(0.0)).drop_nulls()
+    df = df.with_columns(
+        pl.lit(1.0).alias("count"),
+        pl.col("WGTP"),
+        pl.col("WGTP").sum().over("STATE").alias("state_wgtp"),
+    )
+    df = df.sort("STATE", "SERIALNO")
+    df = df.drop("^.*_null$")
+    X_cols = pl.col("count", "BDSP", "NP", "^HHT2.*$", "^HHL.*$", "HINCP")
+    overall_averages = df.select(
+        X_cols * (pl.col("WGTP") / pl.col("WGTP").mean())
+    ).mean()
+
+    state_specific_x = [
+        x.select(X_cols).to_numpy().astype(np.float64) for x in df.partition_by("STATE")
+    ]
+
+    # Initial weights should sum to 1 within state to be consistent with the RHS average
+    weights0 = df.select(pl.col("WGTP") / pl.col("state_wgtp")).to_numpy().ravel()
+    x_sample = sp.block_diag(state_specific_x, format="csr")
+    moments = np.tile(overall_averages.to_numpy().ravel(), 51)
+
+    res = ebw.entropy_balance(
+        x_sample=x_sample, mean_population_moments=moments, weights0=weights0
+    )
+    print(f"Converged? {res.converged}")
+
+    # Rescaled new weights and within-state averages are all equal to overall averages
+    new_cv = (sp.diags_array(res.new_weights / weights0.sum()) @ x_sample).sum(
+        0
+    ) - moments
+    print(f"Overall moments miss post-reweight: {new_cv}")
+    alaska_weights = weights0[df["STATE"].to_numpy() == 2]
+    new_alaska_weights = res.new_weights[df["STATE"].to_numpy() == 2]
+    alaska_orig_moments = (
+        sp.diags_array(alaska_weights) @ state_specific_x[1]
+    ).sum(0)
+    alaska_new_moments = (
+        sp.diags_array(new_alaska_weights / weights0.sum()) @ state_specific_x[1]
+    ).sum(0)
+    df_alaska =  pl.from_numpy(
+        np.c_[alaska_orig_moments, alaska_new_moments],
+        schema=["alaska_orig", "alaska_new"],
+    )
+    pl.Config.set_tbl_rows(50)
+    compare_df = (
+        pl.concat([overall_averages.unpivot().rename({"value": "national_avg"}), df_alaska], how="horizontal")
+    )
+    print(f"E.g. Alaska moment comparison: {compare_df}")
+    print("Correlation (original weights, new weights):")
+    print(np.corrcoef(res.new_weights, weights0)[0, 1])
+
+
 
 
 if __name__ == "__main__":
