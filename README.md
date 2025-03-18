@@ -122,7 +122,7 @@ $$\text{s.t. }  A=\text{Diag}(\frac{w_{i,0}}{\sum_j w_{j,0}})X, \hspace{3pt} r\g
 where $p_{k}$ is a vector of positive penalty parameters chosen by the user. As above, this method also supports additional bound constraints on $r$ if provided.
 
 
-This versions of the problem moves the constraints into a smooth penalty function, which ensures feasibility. 
+This version of the problem moves the constraints into a smooth penalty function, which ensures feasibility. 
 
 The advantage of this method is allowing for infeasible and collinear moments without any complications, and the simple form of the problem makes optimization fast. 
 
