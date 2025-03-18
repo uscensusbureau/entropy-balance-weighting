@@ -6,9 +6,7 @@ description = "Fast implementations of entropy balancing for survey reweighting.
 readme = "README.md"
 requires-python = ">=3.9"
 dependencies = ["numpy",
-	"scipy", 
-       "pyarrow",
-       "polars", 
+	"scipy",
 	"numexpr",
 	"sparse_dot_mkl",
 	"pypardiso"]
@@ -23,8 +21,8 @@ files = ["weighting"]
 strict = true
 
 [[tool.mypy.overrides]]
-module = ["numexpr", "scipy.*", "pypardiso", "formulaic", 
-       "sparse_dot_mkl", "patito.*", "sympy", "hypothesis.*"]
+module = ["numexpr", "scipy.*", "pypardiso",
+       "sparse_dot_mkl", "hypothesis.*"]
 ignore_missing_imports = true
 
 [tool.ruff]
