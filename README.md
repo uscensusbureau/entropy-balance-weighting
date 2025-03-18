@@ -139,7 +139,7 @@ Please cite this package in any work where it proves useful.
 @software{Sanders_Accelerated_Entropy_Balance_2025,
 author = {Sanders, Carl},
 month = mar,
-title = {{Accelerated Entropy Balance Survey Reweighting}},
+title = {{Accelerated Entropy Balance Sample Reweighting}},
 url = {https://github.com/uscensusbureau/entropy-balance-weighting},
 version = {0.5.0},
 year = {2025}
