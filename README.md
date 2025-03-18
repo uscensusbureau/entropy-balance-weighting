@@ -21,6 +21,8 @@ Requirements:
 - Required packages for testing:
   - polars (1.0+)
   - pytest (8.3.0+)
+- Required packages for examples:
+  - requests
 
 Installation:
 -------------
