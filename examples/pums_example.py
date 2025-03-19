@@ -24,6 +24,11 @@ def main() -> None:
     this process could be used to match smaller geographies when available, or
     information of number of housing units with residents of a certain age in them,
     if this information were externally available.
+
+    Treatment/control weighting reweights each state to have the same weighted
+    average number of bedrooms, number of persons per unit, distribution of 
+    household types, distribution of language spoken at home, and mean household
+    income.
     """
     state_housing_estimates = download_state_housing_estimates()
     household_weights = download_and_process_acs_data()
