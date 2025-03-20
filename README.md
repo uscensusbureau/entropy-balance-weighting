@@ -1,7 +1,7 @@
 Accelerated Entropy Balancing Sample Reweighting
 ------------------------------------
 This package implements an Entropy Balancing Weighting (EBW) routine for dense or sparse matrices.
-The goal of this package was to scale the EBW algorithm to allow it to work with large, complicated data
+The goal of this package is to scale the EBW algorithm to allow it to work with large, complicated data
 sets. A particular focus is then on allowing sparse inputs, collinearity, and potential 
 infeasibility without additional front-end data manipulation by the user.
 
