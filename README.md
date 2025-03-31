@@ -1,4 +1,4 @@
-Accelerated Entropy Balancing Sample Reweighting
+Accelerated Entropy Balancing Sample Weighting
 ------------------------------------
 This package implements an Entropy Balancing Weighting (EBW) routine for dense or sparse matrices.
 The goal of this package is to scale the EBW algorithm to allow it to work with large, complicated data
@@ -52,7 +52,7 @@ The function returns an ```EntropyBalanceResults``` object, which has a property
 
 Passing in optional arguments to ```entropy_balance``` can allow for setting bounds in the resulting ratios and dealing with infeasibility of the linear system; see the section "Bounded and Infeasible" below.
 
-Treatment/Control Reweighting:
+Treatment/Control Weighting:
 ---------
 This package can also be used to reweight subsets of observations to all have the same weighted mean characteristics over multiple dimensions. See the ```examples/pums_example.py``` file for an example of how to write the moments as a special case of the more general problem above. In that example, data from the American Community Survey is reweighted at the state level so all states have equal post-weighting means of a number of household-level variables.
 
@@ -139,7 +139,7 @@ Please cite this package in any work where it proves useful.
 @software{Sanders_Accelerated_Entropy_Balance_2025,
 author = {Sanders, Carl},
 month = mar,
-title = {{Accelerated Entropy Balance Sample Reweighting}},
+title = {{Accelerated Entropy Balance Sample Weighting}},
 url = {https://github.com/uscensusbureau/entropy-balance-weighting},
 version = {0.5.0},
 year = {2025}
