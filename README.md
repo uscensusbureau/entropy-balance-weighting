@@ -7,7 +7,7 @@ infeasibility without additional front-end data manipulation by the user.
 
 Scaling up EBW problems is largely possible due to the sparsity of naturally-occurring data, e.g. models with group-specific moments. Utilizing sparsity of datasets, models with millions of observations and hundreds of thousands of constraints have successfully converged in minutes. In addition, extensions like bound constraints and handling collinear and inconsistent moments have been added to the standard approach.
 
-The paper detailing the algorithm is forthcoming.
+The paper detailing the algorithm is available as a [Census Working Paper](https://www.census.gov/library/working-papers/2025/demo/sehsd-wp2025-05.html).
 
 Requirements:
 -------------
